@@ -48,10 +48,9 @@ public class JournalEntryService {
 	}
 	
 	public List<JournalEntry> getJournalEntries() {
-		List<JournalEntry> entries = journalEntryRepo.findAll();
-		return entries;
+		return journalEntryRepo.findAll();
 	}
-	//This has a issue - If I give diff user in AUTH it will still update
+
 	public boolean updateJournalEntry(ObjectId id, JournalEntry newEntry,String userName) {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
 		if (optionalUser.isPresent()){
@@ -72,7 +71,6 @@ public class JournalEntryService {
 	}
 	
 	public Optional<JournalEntry> getJournalEntryById(ObjectId id) {
-		Optional<JournalEntry> entry = journalEntryRepo.findById(id);
-		return entry;
+		return journalEntryRepo.findById(id);
 	}
 }
