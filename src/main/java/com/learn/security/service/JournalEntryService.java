@@ -3,6 +3,7 @@ package com.learn.security.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,11 @@ public class JournalEntryService {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
 		entry.setDate(LocalDateTime.now());
 		JournalEntry entries = journalEntryRepo.save(entry);
-		User user = optionalUser.get();
-		user.getJournalEntries().add(entries);
-		userService.saveUser(user);
+		if (optionalUser.isPresent()){
+			User user = optionalUser.get();
+			user.getJournalEntries().add(entries);
+			userService.saveUser(user);
+		}
 	}
 	
 	@Transactional
@@ -49,17 +52,23 @@ public class JournalEntryService {
 		return entries;
 	}
 	//This has a issue - If I give diff user in AUTH it will still update
-	public void updateJournalEntry(ObjectId id, JournalEntry newEntry,String userName) {
+	public boolean updateJournalEntry(ObjectId id, JournalEntry newEntry,String userName) {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
 		if (optionalUser.isPresent()){
-			Optional<JournalEntry> oldEntry = journalEntryRepo.findById(id);
-			if (oldEntry.isPresent()) {
-				JournalEntry updatedEntry = oldEntry.get();
-				updatedEntry.setTitle(newEntry.getTitle());
-				updatedEntry.setContent(newEntry.getContent());
-				journalEntryRepo.save(updatedEntry);
+			List<JournalEntry> collect = optionalUser.get().getJournalEntries().stream().filter(x -> x.getId().equals(id)).toList();
+			if (!collect.isEmpty()){
+				Optional<JournalEntry> oldEntry = journalEntryRepo.findById(id);
+				if (oldEntry.isPresent()) {
+					JournalEntry updatedEntry = oldEntry.get();
+					updatedEntry.setTitle(newEntry.getTitle());
+					updatedEntry.setContent(newEntry.getContent());
+					journalEntryRepo.save(updatedEntry);
+					return true;
+				}
 			}
+
 		}
+		return false;
 	}
 	
 	public Optional<JournalEntry> getJournalEntryById(ObjectId id) {

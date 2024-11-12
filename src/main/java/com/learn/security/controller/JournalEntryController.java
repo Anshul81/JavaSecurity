@@ -98,14 +98,16 @@ public class JournalEntryController {
 
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-	//TODO
 	@PutMapping("id/{id}")
 	public ResponseEntity<JournalEntry> updateJournalEntry(@RequestBody JournalEntry entry, @PathVariable ObjectId id) {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String userName = authentication.getName();
-			journalEntryService.updateJournalEntry(id, entry, userName);
-			return new ResponseEntity<JournalEntry>(entry, HttpStatus.OK);
+			boolean isUpdated = journalEntryService.updateJournalEntry(id, entry, userName);
+			if (isUpdated)
+				return new ResponseEntity<>(entry, HttpStatus.OK);
+			else
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
