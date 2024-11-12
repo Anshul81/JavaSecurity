@@ -48,19 +48,18 @@ public class JournalEntryService {
 		List<JournalEntry> entries = journalEntryRepo.findAll();
 		return entries;
 	}
-	//TODO
+	//This has a issue - If I give diff user in AUTH it will still update
 	public void updateJournalEntry(ObjectId id, JournalEntry newEntry,String userName) {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
-		User user = optionalUser.get();
-		
-		Optional<JournalEntry> oldEntry = journalEntryRepo.findById(id);
-		if (oldEntry.isPresent()) {
-			JournalEntry updatedEntry = oldEntry.get();
-			updatedEntry.setTitle(newEntry.getTitle());
-			updatedEntry.setContent(newEntry.getContent());
-			journalEntryRepo.save(updatedEntry);
+		if (optionalUser.isPresent()){
+			Optional<JournalEntry> oldEntry = journalEntryRepo.findById(id);
+			if (oldEntry.isPresent()) {
+				JournalEntry updatedEntry = oldEntry.get();
+				updatedEntry.setTitle(newEntry.getTitle());
+				updatedEntry.setContent(newEntry.getContent());
+				journalEntryRepo.save(updatedEntry);
+			}
 		}
-		
 	}
 	
 	public Optional<JournalEntry> getJournalEntryById(ObjectId id) {
