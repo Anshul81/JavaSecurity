@@ -99,13 +99,14 @@ public class JournalEntryController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	//TODO
-	@PutMapping("id/{userName}/{id}")
-	public ResponseEntity<JournalEntry> updateJournalEntry(@RequestBody JournalEntry entry, @PathVariable ObjectId id,@PathVariable String userName ) {
+	@PutMapping("id/{id}")
+	public ResponseEntity<JournalEntry> updateJournalEntry(@RequestBody JournalEntry entry, @PathVariable ObjectId id) {
 		try {
-			journalEntryService.updateJournalEntry(id, entry,userName);
-			return new ResponseEntity<JournalEntry>(entry,HttpStatus.OK);
-		}
-		catch(Exception e){
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String userName = authentication.getName();
+			journalEntryService.updateJournalEntry(id, entry, userName);
+			return new ResponseEntity<JournalEntry>(entry, HttpStatus.OK);
+		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
