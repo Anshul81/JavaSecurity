@@ -36,10 +36,12 @@ public class JournalEntryService {
 	@Transactional
 	public void deleteJournalEntry(ObjectId id, String userName) {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
-		User user = optionalUser.get();
-		user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-		userService.saveUser(user);
-		journalEntryRepo.deleteById(id);
+		if (optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+			userService.saveUser(user);
+			journalEntryRepo.deleteById(id);
+		}
 	}
 	
 	public List<JournalEntry> getJournalEntries() {

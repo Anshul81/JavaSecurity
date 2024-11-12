@@ -24,17 +24,16 @@ import com.learn.security.service.JournalEntryService;
 import com.learn.security.service.UserService;
 
 
-
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryController {
-	
+
 	@Autowired
 	JournalEntryService journalEntryService;
-	
+
 	@Autowired
 	UserService userService;
-	//DONE
+
 	@GetMapping
 	public ResponseEntity<List<JournalEntry>> getJournalEntriesOfAUser() {
 		try {
@@ -49,14 +48,14 @@ public class JournalEntryController {
 			else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			
+
 		}
 		catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
-	//DONE
+
 	@PostMapping
 	public ResponseEntity<JournalEntry> saveJournalEntry(@RequestBody JournalEntry entry) {
 		try {
@@ -69,51 +68,34 @@ public class JournalEntryController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	//TODO
+
 	@DeleteMapping("id/{id}")
 	public ResponseEntity<String> deleteJournalEntry(@PathVariable ObjectId id) {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String userName = authentication.getName();
-			Optional<User> userByUserName = userService.getUserByUserName(userName);
-			User user = userByUserName.get();
-			Optional<JournalEntry> entry = journalEntryService.getJournalEntryById(id);
-			if(entry.isPresent()) {
-				JournalEntry journal = entry.get();
-				if(journal.getId().equals(user.getJournalEntries(id))) {
-					journalEntryService.deleteJournalEntry(id,userName);
-					return new ResponseEntity<String>("Journal Entry Deleted",HttpStatus.OK);
-				}
-				else
-					return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-				
-			}
-			else {
-				return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-			}
-		}
-		catch(Exception e) {
+			journalEntryService.deleteJournalEntry(id, userName);
+			return new ResponseEntity<String>("Journal Entry Deleted", HttpStatus.OK);
+		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-	}
-	//DONE
+		}}
+
 	@GetMapping("id/{id}")
 	public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable ObjectId id) {
-		
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String userName = authentication.getName();
 		Optional<User> optionalUserByUserName = userService.getUserByUserName(userName);
 		User userByUserName = optionalUserByUserName.get();
 		List<JournalEntry> collect = userByUserName.getJournalEntries().stream().filter(x-> x.getId().equals(id)).collect(Collectors.toList());
-		
+
 		if(!collect.isEmpty()) {
 			Optional<JournalEntry> entry = journalEntryService.getJournalEntryById(id);
 			if (entry.isPresent()) {
 				return new ResponseEntity<>(entry.get(),HttpStatus.OK);
 			}
 		}
-		
+
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	//TODO
