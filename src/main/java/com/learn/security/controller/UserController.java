@@ -46,7 +46,7 @@ public class UserController {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String name = authentication.getName();
-			return new ResponseEntity<>("Hi " + name + " Weather Feels Like " + weatherService.getWeather("LONDON").getCurrent().getTempC() , HttpStatus.OK);
+			return new ResponseEntity<>("Hi " + name + " Weather is " + weatherService.getWeather("LONDON").getCurrent().getTempC() + " And Feels Like " + weatherService.getWeather("LONDON").getCurrent().getFeelsLikeC(), HttpStatus.OK);
 		}
 		catch (Exception e){
 			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
