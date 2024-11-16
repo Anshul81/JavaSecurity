@@ -2,6 +2,7 @@ package com.learn.security.service;
 
 import com.learn.security.entity.WeatherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ public class WeatherService {
         this.restTemplate = restTemplate;
     }
 
-    private static final String APIKEY = "f45df24eae8d4294b6f63520241611";
+    @Value("${weather_api_key}")
+    private String APIKEY;
     private static final String URL = "http://api.weatherapi.com/v1/current.json?key=API_KEY&q=CITY";
 
     public WeatherResponse getWeather(String city) {

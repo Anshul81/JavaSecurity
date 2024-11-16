@@ -42,7 +42,7 @@ public class UserController {
 	}
 
 	@GetMapping("/weather")
-	public ResponseEntity<?> getGreeting(){
+	public ResponseEntity<String> getGreeting(){
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String name = authentication.getName();
