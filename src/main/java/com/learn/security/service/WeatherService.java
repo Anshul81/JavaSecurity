@@ -21,6 +21,7 @@ public class WeatherService {
 
     @Value("${weather_api_key}")
     private String APIKEY;
+
     private static final String URL = "http://api.weatherapi.com/v1/current.json?key=API_KEY&q=CITY";
 
     public WeatherResponse getWeather(String city) {
